@@ -2,11 +2,8 @@ from calendar import week
 import bs4
 import requests
 from bs4 import BeautifulSoup
-import urllib.request as req
+
 import json
-import sys
-import json
-from enum import Enum
 import datetime
 import re  # regex
 import unicodedata
@@ -19,6 +16,7 @@ import pandas as pd
 
 class ClassItem:
     def __init__(self):
+        self.semi='' #學期
         self.clsno='' #課程代碼
         self.clsfor='' #開課班級
         self.clsName='' #課程名稱
@@ -34,6 +32,7 @@ class ClassItem:
         
     def getColTypePairs():
         return {
+            'semi':"TEXT",
             'clsno': 'TEXT',
             'clsfor': 'TEXT',
             'clsName': 'TEXT',
@@ -49,6 +48,7 @@ class ClassItem:
         }
     def getColDataPairs(self):
         return {
+            'semi':self.semi,
             'clsno': self.clsno,
             'clsfor': self.clsfor,
             'clsName': self.clsName,
@@ -99,7 +99,7 @@ def CreateDB():
 def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
     url=f"https://aisap.nutc.edu.tw/public/day/course_list.aspx?sch_dep=1&sem={sem}&sch_type={sch_type}&weekday={weekday}&start_section={start_section}&end_section={end_section}&_p={_p}"
     req = requests.get(url)
-    soup = BeautifulSoup(req.text )
+    soup = BeautifulSoup(req.text ,features="html5lib" )
     trs= soup.find_all('tr')
     
     #print (tr[:])
@@ -110,6 +110,7 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
     for tr in trs[2:]:
         tds= tr.findChildren('td',recursive=False)
         _data =ClassItem()
+        _data.semi=sem
         _data.clsno=tds[1].text
         _data.clsfor=tds[2].text
         _data.clsName=tds[3].text
@@ -135,12 +136,8 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
         _data.crid=unicodedata.normalize('NFKC', _data.crid)
         
         classDatas.append(_data);
-        '''
-        for td in tds:
-            print (td.text)
-        '''
-        pass    
-    
+        pass
+    return classDatas;
     #寫成csv
     with open(fileName, 'w',encoding='utf8') as csvfile:
         writer = csv.writer(csvfile)
@@ -150,9 +147,34 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
         
         for data in classDatas:            
             writer.writerow(data.getColDataPairs().values())        
-    
     pass
+
+def WriteCsv(fileName , classDatas):
+    with open(fileName, 'w',encoding='utf8') as csvfile:
+        writer = csv.writer(csvfile)
+        
+        rows= ClassItem.getColTypePairs().keys()
+        writer.writerow(rows)
+        
+        for data in classDatas:            
+            writer.writerow(data.getColDataPairs().values())        
+    pass
+
+def GetMaxPage(sem, sch_type,weekday,start_section ,end_section):
+    url=f"https://aisap.nutc.edu.tw/public/day/course_list.aspx?sch_dep=1&sem={sem}&sch_type={sch_type}&weekday={weekday}&start_section={start_section}&end_section={end_section}"
+    print(url)
+    req = requests.get(url)
+    soup = BeautifulSoup(req.text ,features="html5lib" )
+    #lastHref= soup.find_all("b a", href=True)[-2]['href']
+    #lastHref= soup.find_all("b > a", href=True)
+    b =soup.find_all('b')
+    herf = b[-1].findChildren("a" , recursive=False)
+    a = herf[0].attrs['href']
     
+    page = re.search(r'_p=(\d+)',a).group(1)
+    print (page)
+    return eval(page)
+
     
 def WriteCsvToSqlite(fileName):
     df= pd.read_csv(fileName, encoding='utf8')
@@ -176,16 +198,24 @@ if __name__ == '__main__':
     sch_type=0
     weekday=1
     start_section=1
-    end_section=1
+    end_section=7
     _p=1
 
+    semiRange = 3
     #抓範圍3年內的上下學期
-    for i in range(sem-3,sem):
+    for i in range(sem-semiRange,sem):
         for j in [1,2]: #上下學期
             _curSem=str(i)+str(j)
             fileName=_curSem+'.csv'
+            semiDatas=[]
+            maxPage = GetMaxPage(_curSem , sch_type,weekday,start_section,end_section)
             
-            GetClassData(_curSem , sch_type,week,start_section,end_section ,_p ,fileName)
+            #該學期每一頁
+            for page in range(1,maxPage+1):
+                datas = GetClassData(_curSem , sch_type,weekday,start_section,end_section ,page ,fileName)
+                semiDatas.extend(datas)
+
+            WriteCsv(fileName,semiDatas)
             WriteCsvToSqlite(fileName)
             pass
     

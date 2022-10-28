@@ -1,0 +1,38 @@
+.full-screen {
+    width: 100vw;
+    height: 100vh;
+    background-color: aqua;
+    position: fixed;
+
+}
+.abs-center{
+position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.home-center-container {
+    position: absolute;
+    max-height: 80%;
+    max-width: 50%;
+
+    width:  500px;
+    padding: 25px;
+    border-radius: 8px;
+
+    background-color: blue;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.form-item{
+    height: 50px;
+    background-color: antiquewhite;
+    border-radius: 3px;
+    margin:  0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}

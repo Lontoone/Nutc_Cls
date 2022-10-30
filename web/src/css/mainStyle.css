@@ -1,7 +1,7 @@
 .full-screen {
     width: 100vw;
     height: 100vh;
-    background-color: aqua;
+    background-color: #F5EFE6;
     position: fixed;
 
 }
@@ -20,19 +20,43 @@ position: absolute;
     padding: 25px;
     border-radius: 8px;
 
-    background-color: blue;
+    background-color: #E8DFCA;
     display: flex;
     flex-direction: column;
 
 }
 
 .form-item{
-    height: 50px;
-    background-color: antiquewhite;
+    height: 35px;
+    background-color: #AEBDCA;
+    color: #455769;
     border-radius: 3px;
-    margin:  0 auto;
+    /*margin:  0 auto;*/
     display: flex;
+    justify-content: flex-start;
+    align-items: center;  
+    margin: 3px 0;
+}
+.form-item p{
+    min-width: 50px;
+    text-align: center;
+}
+.form-item-input{
+    border: 0;
+    border-radius: 5px;
+    height: 50%;
+    text-align: center;    
+}
+
+.form-item-full-button{
+    width: 70%;
+    background-color: #7895B2;
+    height: 30px;
+    display: flex;
+    margin: 0 auto;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
 
+    cursor: pointer;
 }

@@ -1,0 +1,32 @@
+.ilcb-root{
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+
+    width: 90%;
+    height: 90%;
+
+    justify-content: space-evenly;    
+    align-content: stretch;
+}
+
+.ilcb-item{
+    cursor: pointer;
+    background-color: cadetblue;
+    
+    height: 100%;
+    width: 100%;
+    display: flex;
+    margin: 0 1px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+
+}
+.ilcb-item:hover{
+    background-color: aqua;
+}
+
+.ilcb-selected{
+    background-color: aqua;
+}

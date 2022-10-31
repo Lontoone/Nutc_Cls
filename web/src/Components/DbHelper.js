@@ -24,7 +24,7 @@ function loadBinaryFile(path, success) {
   };
   xhr.send();
 };
-async function GetDb(sql) {
+async function GetDb(sql,callback) {
   const SQL = await initSqlJs({ locateFile: () => sqlWasm });
 
   //const db = new SQL.Database("D:/Work/NUTC_Cls/web/src/cls.db");
@@ -36,16 +36,10 @@ async function GetDb(sql) {
     var res = sqldb.exec(sql);
     console.log(res);
 
-    return res;
+    //return res;
+    callback(res);
   });
 }
-/*
-function ClassDB(sql = "SELECT * FROM cls") {
-  const res =  useMemo((sql ) => {
-    GetDb(sql);
-  }, [sql]);
-  return res;
-}*/
 
 export default GetDb;
 

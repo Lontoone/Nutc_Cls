@@ -1,3 +1,4 @@
+import os
 import bs4
 import requests
 from bs4 import BeautifulSoup
@@ -26,7 +27,7 @@ class ClassItem:
         self.week='' #星期
         self.hour='' #時數
         self.crid='' #學分
-        self.stuCount='' #選課人數
+        #self.stuCount='' #選課人數
         self.teacher='' #老師
         self.sch_type=''#學制
         
@@ -43,7 +44,7 @@ class ClassItem:
             'week': 'TEXT',
             'hour':'INTEGER',
             'crid': 'INTEGER',
-            'stuCount' :'TEXT',
+            #'stuCount' :'TEXT',
             'teacher': 'TEXT',
             'sch_type':'TEXT'                  
         }
@@ -60,7 +61,7 @@ class ClassItem:
             'week': self.week,
             'hour':self.hour,
             'crid': self.crid,
-            'stuCount' :self.stuCount,
+            #'stuCount' :self.stuCount,
             'teacher': self.teacher,
             'sch_type':self.sch_type             
         }
@@ -68,7 +69,9 @@ class ClassItem:
         
 
 def CreateDB():
-    conn = sqlite3.connect('cls.db')
+    #conn = sqlite3.connect('cls.db')
+    dbName =os.getcwd()+f"\web\public\Datas\cls.db"
+    conn = sqlite3.connect(dbName)
     cols=''
     for k,v in ClassItem.getColTypePairs().items():
         cols+=k+' '+v+','
@@ -102,7 +105,7 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p):
         _data.clsfor=tds[2].text
         _data.clsName=tds[3].text
         
-        _data.clsRoom=re.search(r'(\d+)' ,tds[5].text ).group()
+        _data.clsRoom=re.search(r'\(\w+\)' ,tds[5].text ).group()
         _data.week = re.search(r'^.{0,3}' ,tds[5].text ).group()
         _data.start = re.search(r'第(.)' ,tds[5].text ).group(1)
         _data.end = re.search(r'(.)節' ,tds[5].text ).group(1)
@@ -113,7 +116,7 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p):
         _data.hour=re.search(r'^.',tds[7].text).group()
         _data.crid=re.search(r'.$',tds[7].text).group()
         
-        _data.stuCount=tds[8].text
+        #_data.stuCount=tds[8].text #更新，不記錄人數
         _data.teacher=tds[9].text
 
         _data.sch_type=sch_type
@@ -171,6 +174,14 @@ def WriteCsvToSqlite(fileName):
         
     pass
 
+def CheckSemiDataExist(semi):
+    conn,cursor = CreateDB()
+    cursor.execute(f"SELECT semi FROM cls WHERE semi ={semi}")
+    data = cursor.fetchone()
+    if data:
+        return True
+    else:
+        return False
 #CreateDB()
 
 if __name__ == '__main__':
@@ -185,12 +196,25 @@ if __name__ == '__main__':
     _p=1
 
     #抓範圍_年內的上下學期
-    semiRange = 1
+    semiRange = 3
     for i in range(sem-semiRange,sem + 1):
         for j in [1,2]: #上下學期
             semiDatas=[]
             _curSem=str(i)+str(j)
-            fileName=_curSem+'.csv'
+            
+            #檢查 DB 是否存在資料
+            if (CheckSemiDataExist(_curSem)):
+                print(f"學期 {_curSem} 已存在")
+                continue
+            
+            #檢查是否有csv檔案
+            fileName=os.getcwd()+f"\web\public\Datas\{_curSem}.csv"
+            if (os.path.exists(fileName)):
+                #存在CSV就直接存CSV寫入，跳過爬蟲
+                WriteCsvToSqlite(fileName)
+                print(f"從學期 {_curSem}.csv讀取")
+                continue
+            
 
             for _sch_type in all_sch_type: #學制
                 print(f"==處理 {i}-{j} 學年 學制{_sch_type} 資料中 ==")

@@ -1,0 +1,87 @@
+.call-me-btn-root {
+  position: fixed;
+  bottom: 30px;
+  right: 35px;
+  font-family: "RocknRoll One";
+  line-height: 15px;
+  font-size: smaller;
+}
+.call-me-btn-root img {
+  position: absolute;
+  bottom: 0;
+  right: 40px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  border: 5px double black;
+
+  margin-top: 15px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+@keyframes popout {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes popout {
+  from {
+    -webkit-transform: scale(0);
+  }
+  to {
+    -webkit-transform: scale(1);
+  }
+}
+.call-me-btn-root:hover > .dialog {
+  display: flex;
+  animation: popout 0.7s ease;
+}
+
+.dialog {
+  
+  bottom: 5.5rem;
+  background-color: #1c3d5a;
+  border-radius: 0.25rem;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  margin-left: 0.5rem;
+  margin-right: 0.0rem;
+  width: 130px;
+  margin: 0 auto;
+  margin-bottom: 70px;
+  /*animation: popout 0.7s ease;*/
+}
+
+.dialog ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.dialog li {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.dialog li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #1c3d5a;
+  position: relative;
+  top: 0.6rem;
+}

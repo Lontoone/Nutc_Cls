@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/Nutc_cls/static/css/main.35169924.chunk.css",
+    "main.js": "/Nutc_cls/static/js/main.04ae4f46.chunk.js",
+    "main.js.map": "/Nutc_cls/static/js/main.04ae4f46.chunk.js.map",
+    "runtime-main.js": "/Nutc_cls/static/js/runtime-main.8d2d8612.js",
+    "runtime-main.js.map": "/Nutc_cls/static/js/runtime-main.8d2d8612.js.map",
+    "static/css/2.fe708519.chunk.css": "/Nutc_cls/static/css/2.fe708519.chunk.css",
+    "static/js/2.f1cb23bd.chunk.js": "/Nutc_cls/static/js/2.f1cb23bd.chunk.js",
+    "static/js/2.f1cb23bd.chunk.js.map": "/Nutc_cls/static/js/2.f1cb23bd.chunk.js.map",
+    "static/js/3.ccc212b5.chunk.js": "/Nutc_cls/static/js/3.ccc212b5.chunk.js",
+    "static/js/3.ccc212b5.chunk.js.map": "/Nutc_cls/static/js/3.ccc212b5.chunk.js.map",
+    "index.html": "/Nutc_cls/index.html",
+    "static/css/2.fe708519.chunk.css.map": "/Nutc_cls/static/css/2.fe708519.chunk.css.map",
+    "static/css/main.35169924.chunk.css.map": "/Nutc_cls/static/css/main.35169924.chunk.css.map",
+    "static/js/2.f1cb23bd.chunk.js.LICENSE.txt": "/Nutc_cls/static/js/2.f1cb23bd.chunk.js.LICENSE.txt",
+    "static/media/sql-wasm.057823fe.wasm": "/Nutc_cls/static/media/sql-wasm.057823fe.wasm"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8d2d8612.js",
+    "static/css/2.fe708519.chunk.css",
+    "static/js/2.f1cb23bd.chunk.js",
+    "static/css/main.35169924.chunk.css",
+    "static/js/main.04ae4f46.chunk.js"
+  ]
+}

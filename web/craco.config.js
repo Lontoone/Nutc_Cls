@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 module.exports = {
   webpack: {
     configure: {
@@ -16,11 +17,15 @@ module.exports = {
         new webpack.DefinePlugin({
           process: { env: {} },
         }),
+        new webpack.BannerPlugin("做好玩的 by Lontoone"),
       ],
     },
   },
   webpackFinal: (config) => {
     config.node = { fs: "empty" };
     return config;
+  },
+  kit: {
+    floc: true,
   },
 };

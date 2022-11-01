@@ -1,7 +1,8 @@
 {
+  "homepage": "https://Lontoone.github.ip/Nutc_cls",
   "name": "web",
   "version": "0.1.0",
-  "private": true,
+  "private": "false",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -20,9 +21,12 @@
   },
   "devDependencies": {
     "@craco/craco": "^5.9.0",
+    "gh-pages": "^4.0.0",
     "typescript": "^4.5.5"
   },
   "scripts": {
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",

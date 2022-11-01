@@ -1,4 +1,3 @@
-from calendar import week
 import bs4
 import requests
 from bs4 import BeautifulSoup
@@ -29,6 +28,7 @@ class ClassItem:
         self.crid='' #學分
         self.stuCount='' #選課人數
         self.teacher='' #老師
+        self.sch_type=''#學制
         
     def getColTypePairs():
         return {
@@ -44,7 +44,8 @@ class ClassItem:
             'hour':'INTEGER',
             'crid': 'INTEGER',
             'stuCount' :'TEXT',
-            'teacher': 'TEXT'                  
+            'teacher': 'TEXT',
+            'sch_type':'TEXT'                  
         }
     def getColDataPairs(self):
         return {
@@ -60,13 +61,14 @@ class ClassItem:
             'hour':self.hour,
             'crid': self.crid,
             'stuCount' :self.stuCount,
-            'teacher': self.teacher                  
+            'teacher': self.teacher,
+            'sch_type':self.sch_type             
         }
         
         
 
 def CreateDB():
-    conn = sqlite3.connect('cls.db');
+    conn = sqlite3.connect('cls.db')
     cols=''
     for k,v in ClassItem.getColTypePairs().items():
         cols+=k+' '+v+','
@@ -75,31 +77,16 @@ def CreateDB():
     cols=re.sub(r',$','',cols)
     
     create_sql='CREATE TABLE IF NOT EXISTS cls ('+cols +')'
-    '''
-    create_sql = 'CREATE TABLE IF NOT EXISTS cls (\
-        clsno TEXT,\
-        clsfor TEXT,\
-        clsName TEXT,\
-        clsRoom TEXT,\
-        clsOpt TEXT,\
-        start INTEGER,\
-        end INTEGER,\
-        week TEXT,\
-        hour INTEGER,\
-        crid INTEGER,\
-        stuCount TEXT,\
-        teacher TEXT\
-        )'
-    '''
     cursor = conn.cursor()
     cursor.execute(create_sql)
     return conn,cursor
 
 
-def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
+def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p):
     url=f"https://aisap.nutc.edu.tw/public/day/course_list.aspx?sch_dep=1&sem={sem}&sch_type={sch_type}&weekday={weekday}&start_section={start_section}&end_section={end_section}&_p={_p}"
     req = requests.get(url)
-    soup = BeautifulSoup(req.text ,features="html5lib" )
+    #soup = BeautifulSoup(req.text ,features="html5lib" )
+    soup = BeautifulSoup(req.text  )
     trs= soup.find_all('tr')
     
     #print (tr[:])
@@ -128,6 +115,8 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
         
         _data.stuCount=tds[8].text
         _data.teacher=tds[9].text
+
+        _data.sch_type=sch_type
         
         #全形轉半形
         _data.start=unicodedata.normalize('NFKC', _data.start)
@@ -135,19 +124,10 @@ def GetClassData(sem, sch_type,weekday,start_section ,end_section, _p,fileName):
         _data.hour=unicodedata.normalize('NFKC', _data.hour)
         _data.crid=unicodedata.normalize('NFKC', _data.crid)
         
-        classDatas.append(_data);
+        classDatas.append(_data)
         pass
-    return classDatas;
-    #寫成csv
-    with open(fileName, 'w',encoding='utf8') as csvfile:
-        writer = csv.writer(csvfile)
-        
-        rows= ClassItem.getColTypePairs().keys()
-        writer.writerow(rows)
-        
-        for data in classDatas:            
-            writer.writerow(data.getColDataPairs().values())        
-    pass
+    return classDatas
+
 
 def WriteCsv(fileName , classDatas):
     with open(fileName, 'w',encoding='utf8') as csvfile:
@@ -164,10 +144,12 @@ def GetMaxPage(sem, sch_type,weekday,start_section ,end_section):
     url=f"https://aisap.nutc.edu.tw/public/day/course_list.aspx?sch_dep=1&sem={sem}&sch_type={sch_type}&weekday={weekday}&start_section={start_section}&end_section={end_section}"
     print(url)
     req = requests.get(url)
-    soup = BeautifulSoup(req.text ,features="html5lib" )
-    #lastHref= soup.find_all("b a", href=True)[-2]['href']
-    #lastHref= soup.find_all("b > a", href=True)
+    #soup = BeautifulSoup(req.text ,features="html5lib" )
+    soup = BeautifulSoup(req.text  )
+
     b =soup.find_all('b')
+    if(len(b)<=0):
+        return 0
     herf = b[-1].findChildren("a" , recursive=False)
     a = herf[0].attrs['href']
     
@@ -195,27 +177,39 @@ if __name__ == '__main__':
     
     #sem = 1111
     sem = datetime.datetime.now().year - 1911  #民國年
+    all_sch_type=[1,3,4,8]
     sch_type=0
     weekday=1
     start_section=1
-    end_section=7
+    end_section=8
     _p=1
 
-    semiRange = 3
-    #抓範圍3年內的上下學期
-    for i in range(sem-semiRange,sem):
+    #抓範圍_年內的上下學期
+    semiRange = 1
+    for i in range(sem-semiRange,sem + 1):
         for j in [1,2]: #上下學期
+            semiDatas=[]
             _curSem=str(i)+str(j)
             fileName=_curSem+'.csv'
-            semiDatas=[]
-            maxPage = GetMaxPage(_curSem , sch_type,weekday,start_section,end_section)
-            
-            #該學期每一頁
-            for page in range(1,maxPage+1):
-                datas = GetClassData(_curSem , sch_type,weekday,start_section,end_section ,page ,fileName)
-                semiDatas.extend(datas)
 
+            for _sch_type in all_sch_type: #學制
+                print(f"==處理 {i}-{j} 學年 學制{_sch_type} 資料中 ==")
+                              
+                for z in range(1,8): #星期1~7
+                    maxPage = GetMaxPage(_curSem , _sch_type , z , start_section , end_section)
+                    if(maxPage==0):
+                        print(f"查無資料")
+                        break
+                    print(f"--> 星期{z} 寫入{fileName}  資料頁數{maxPage}")
+
+                    #該學期每一頁
+                    for page in range(1,maxPage+1):
+                        datas = GetClassData(_curSem , _sch_type , z , start_section , end_section , page )
+                        semiDatas.extend(datas)
+            print(f'共有{len(semiDatas)}筆資料')
             WriteCsv(fileName,semiDatas)
             WriteCsvToSqlite(fileName)
             pass
+
+    print("處理完成")
     

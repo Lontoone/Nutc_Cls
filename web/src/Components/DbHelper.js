@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 const dblink =
   "https://github.com/Lontoone/Nutc_Cls/blob/master/Datas/cls.db?raw=true";
 const localLink = "D:/Work/NUTC_Cls/web/src/cls.db";
-const relLink = process.env.PUBLIC_URL + "/cls.db";
+const relLink = process.env.PUBLIC_URL + "/Datas/cls.db";
 
 
 function loadBinaryFile(path, success) {

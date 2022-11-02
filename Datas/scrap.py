@@ -70,7 +70,8 @@ class ClassItem:
 
 def CreateDB():
     #conn = sqlite3.connect('cls.db')
-    dbName =os.getcwd()+f"\web\public\Datas\cls.db"
+    #dbName =os.getcwd()+f"\web\public\Datas\cls.db"
+    dbName =os.path.dirname (os.path.realpath(__file__))+'\cls.db'
     conn = sqlite3.connect(dbName)
     cols=''
     for k,v in ClassItem.getColTypePairs().items():

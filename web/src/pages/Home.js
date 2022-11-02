@@ -53,6 +53,7 @@ export default function Home() {
   const semiRef = useRef("semiRef");
   const startRef = useRef("startRef");
   const endRef = useRef("endRef");
+  const fixedDurationRef = useRef("fixedDurationRef");
   //console.log(searchResult);
 
   function HandleSearch() {
@@ -62,6 +63,7 @@ export default function Home() {
     var sch_type = schTypeRef.current.state.opts;
     var start = startRef.current.value;
     var end = endRef.current.value;
+    var isFixedDuration =fixedDurationRef.current.checked;    
 
     var selectedWeeks = weeks.reduce(
       (acc, val) => (val.isChecked ? acc.concat("'" + val.value + "'") : acc),
@@ -73,6 +75,8 @@ export default function Home() {
     );
     var week_sql = selectedWeeks.join(",");
     var schType_sql = selectedSchTypes.join(",");
+    var start_sql_eq = isFixedDuration? "==" :">=";
+    var end_sql_eq = isFixedDuration? "==" :"<=";
     console.log(semi);
     console.log(weeks);
     console.log(start);
@@ -82,8 +86,8 @@ export default function Home() {
 
     var sql = `SELECT * from cls WHERE 
                         semi='${semi}' AND 
-                        start >=${start} AND
-                        end <=${end} AND
+                        start ${start_sql_eq} ${start} AND
+                        end ${end_sql_eq} ${end} AND
                         week IN (${week_sql}) AND
                         sch_type IN (${schType_sql})
 
@@ -151,6 +155,9 @@ export default function Home() {
             defaultValue={8}
             ref={endRef}
           ></input>
+
+          <input type={"checkbox"} ref={fixedDurationRef}></input>
+          完全符合
         </div>
 
         {/* 選單項目 --學制 */}

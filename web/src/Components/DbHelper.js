@@ -4,15 +4,10 @@ import sqlWasm from "../utils/sql-wasm.wasm";
 import fs from "fs";
 import React, { useMemo } from 'react';
 
-
-//https://github.com/sql-js/sql.js/
-const dblink =
-  "https://github.com/Lontoone/Nutc_Cls/blob/master/Datas/cls.db?raw=true";
-const localLink = "D:/Work/NUTC_Cls/web/src/cls.db";
 const relLink = process.env.PUBLIC_URL + "/Datas/cls.db";
 
 
-function loadBinaryFile(path, success) {
+async function loadBinaryFile(path, success) {
   var xhr = new XMLHttpRequest();
   xhr.open("GET", path, true);
   xhr.responseType = "arraybuffer";
@@ -26,17 +21,14 @@ function loadBinaryFile(path, success) {
 };
 async function GetDb(sql,callback) {
   const SQL = await initSqlJs({ locateFile: () => sqlWasm });
+  //const db = new SQL.Database("url/cls.db");
 
-  //const db = new SQL.Database("D:/Work/NUTC_Cls/web/src/cls.db");
-
-  loadBinaryFile(relLink, function (data) {
+  await loadBinaryFile(relLink, function (data) {
     var sqldb = new SQL.Database(data);
     // Database is ready
     //var res = sqldb.exec("SELECT * FROM cls");
-    var res = sqldb.exec(sql);
-    console.log(res);
+    var res = sqldb.exec(sql);    
 
-    //return res;
     callback(res);
   });
 }

@@ -193,7 +193,7 @@ export default function Home() {
         <button
           class=""
           onClick={() => {
-            const url = "https://github.com/Lontoone";
+            const url = "https://github.com/Lontoone/Nutc_Cls";
             window.open(url, "_blank");
           }}
         >

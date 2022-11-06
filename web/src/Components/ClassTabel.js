@@ -10,7 +10,7 @@ export default function ClassTabel({ sql }) {
   const searchResult = useMemo(() => GetDb(sql, OnDataGet), [sql]);
   function OnDataGet(data) {
     //searchData = data;
-    //console.log(data);
+    console.log(data);
     setData(data);
   }
 

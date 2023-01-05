@@ -209,7 +209,8 @@ if __name__ == '__main__':
                 continue
             
             #檢查是否有csv檔案
-            fileName=os.getcwd()+f"\web\public\Datas\{_curSem}.csv"
+            #fileName=os.getcwd()+f"\web\public\Datas\{_curSem}.csv"
+            fileName=os.getcwd()+f"\{_curSem}.csv"
             if (os.path.exists(fileName)):
                 #存在CSV就直接存CSV寫入，跳過爬蟲
                 WriteCsvToSqlite(fileName)

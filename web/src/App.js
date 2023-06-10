@@ -1,18 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from './pages/Home';
+//import logo from './logo.svg';
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import SqlApi from "./pages/SqlApi";
 
 function App() {
   return (
-    <Router>
-   
-      <Routes>
-        <Route path="/" >
-          <Route index element={<Home />} />
-         </Route>
-      </Routes>
-    </Router>
+    <Routes>       
+      <Route path="/api" element={<SqlApi/>}></Route>          
+      <Route exact path="/" element={ <Home />}></Route>
+      
+    </Routes>
   );
 }
 

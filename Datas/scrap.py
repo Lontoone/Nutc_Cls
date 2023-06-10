@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
     semiRange = 3
     #抓範圍3年內的上下學期
-    for i in range(sem-semiRange,sem):
+    for i in range(sem-semiRange,sem +1 ):
         for j in [1,2]: #上下學期
             _curSem=str(i)+str(j)
             fileName=_curSem+'.csv'
